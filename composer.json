@@ -1,0 +1,19 @@
+{
+    "name": "UQ-eLIPSE/ultimalib-php",
+    "description": "Ultima php library",
+    "license": "MIT",
+    "keywords": [],
+    "authors": [{
+            "name": "eLIPSE",
+            "email": "elipse@uq.edu.au"
+    }],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Elipse\\Ultima": "src"
+        }
+    }
+}
