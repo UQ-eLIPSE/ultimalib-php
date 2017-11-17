@@ -1,6 +1,5 @@
-<?php namespace Elipse\Ultima;
-
-class LTIException extends \Exception {}
+<?php
+namespace Elipse\Ultima;
 
 class LTIValidator {
     private $remote_endpoint;
@@ -28,6 +27,7 @@ class LTIValidator {
             "method" => $http_method,
             "payload" => $payload
         ];
+
         // Use http even if https because PHP
         $options = array(
             "http" => array(
@@ -45,6 +45,10 @@ class LTIValidator {
         }
 
         $response_headers = stream_get_meta_data($stream);
+        if (empty($response_headers["wrapper_data"])) {
+            throw new LTIException("Error: Could not find response headers");
+        }
+
         $response_status = $this->get_last_http_status($response_headers["wrapper_data"]);
 
         $response_body = stream_get_contents($stream);
@@ -54,6 +58,7 @@ class LTIValidator {
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new LTIException("Error: [$response_status] $response_body");
         }
+
         if (!empty($response_payload->error)) {
             throw new LTIException($response_payload->error);
         }
@@ -61,30 +66,3 @@ class LTIValidator {
         return $response_payload;
     }
 }
-
-class UltimaSingleton {
-    static private $validator = null;
-
-    static function getValidator($remote_endpoint, $app_key) {
-        $validator = self::$validator;
-        if (empty(self::$validator)) {
-            if (empty($remote_endpoint)) {
-                throw new LTIException("LTIValidator has not been initialized and is missing remote_endpoint");
-            } else if (empty($app_key)) {
-                throw new LTIException("LTIValidator has not been initialized and is missing app_key");
-            }
-
-            self::$validator = new LTIValidator($remote_endpoint, $app_key);
-        }
-
-        return self::$validator;
-    }
-}
-?>
-
-<?php
-$validator = UltimaSingleton::getValidator("https://ultima.uqcloud.net/lti/validate/", "HGJKHGJTY3865ripple");
-?>
-<pre>
-<?= var_dump($validator->validate("http://localhost:80/Ultima.php", "POST", $_POST)); ?>
-</pre>

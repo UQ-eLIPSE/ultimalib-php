@@ -9,11 +9,12 @@
     }],
     "require": {},
     "require-dev": {
-        "phpunit/phpunit": "4.0.*"
+        "phpunit/phpunit": "5.7",
+        "php-mock/php-mock-phpunit": "1.1.2"
     },
     "autoload": {
         "psr-4": {
-            "Elipse\\Ultima": "src"
+            "Elipse\\Ultima\\": "src/"
         }
     }
 }
